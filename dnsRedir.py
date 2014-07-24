@@ -422,7 +422,7 @@ def parseNames(args) :
     return tab
 
 def getopts() :
-    p = optparse.OptionParser(usage="usage: %prog [opts] [type:name:val ...]")
+    p = optparse.OptionParser(usage="usage: %prog [opts] [type:name=val ...]")
     p.add_option('-d', dest='dnsServer', default=None, help='default DNS server. Default=' + publicDNS)
     p.add_option('-b', dest='bindAddr', default='', help='Address to bind to. Default=any')
     p.add_option('-p', dest='port', type=int, default=53, help='Port to listen on. Default=53')

@@ -421,9 +421,21 @@ def parseNames(args) :
         tab.append((ty,pat,val))
     return tab
 
+def parseConfig(fileName) :
+    fd = open(fileName, "r")
+    config = fd.readlines(); fd.close()
+    args = []
+    for line in config :
+        name = line.strip(' \t\r\n')
+        if name == '':
+            continue
+        args.append(name)
+    return parseNames(args)
+
 def getopts() :
     p = optparse.OptionParser(usage="usage: %prog [opts] [type:name=val ...]")
     p.add_option('-d', dest='dnsServer', default=None, help='default DNS server. Default=' + publicDNS)
+    p.add_option('-c', dest='configFile', default=None, help='DNS configuration file. If set, command line type:name=val triplets will be ignored.')
     p.add_option('-b', dest='bindAddr', default='', help='Address to bind to. Default=any')
     p.add_option('-p', dest='port', type=int, default=53, help='Port to listen on. Default=53')
     p.add_option('-P', dest='dnsServerPort', type=int, default=53, help='Port of default DNS server. Default=53')
@@ -431,7 +443,10 @@ def getopts() :
     p.add_option('-q', dest='quiet', action='store_true', help='Quiet')
     p.add_option('-6', dest='six', action='store_true', help='Use IPv6 server socket')
     opt,args = p.parse_args()
-    opt.names = parseNames(args)
+    if opt.configFile == None :
+        opt.names = parseNames(args)
+    else:
+        opt.names = parseConfig(opt.configFile)
     if opt.dnsServer == None :
         opt.dnsServer = publicDNS6 if opt.six else publicDNS
     opt.srv = opt.dnsServer, opt.dnsServerPort
